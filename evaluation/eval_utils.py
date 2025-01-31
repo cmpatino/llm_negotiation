@@ -6,7 +6,7 @@ import json
 import numpy as np
 
 
-def load_setup(output_dir, num_agents, num_issues):
+def load_setup(output_dir, agents_num, num_issues):
     
     with open(os.path.join(output_dir, 'config.txt'), 'r') as f:
         agents_config_file = f.readlines()
@@ -17,7 +17,7 @@ def load_setup(output_dir, num_agents, num_issues):
     role_to_agents = {}
     incentive_to_agents = {}
     
-    assert len(agents_config_file) == num_agents
+    assert len(agents_config_file) == agents_num
     
     for line in agents_config_file:   
         agent_game_name, file_name, role, incentive, model = line.split(',') 
@@ -62,15 +62,19 @@ def calculator(scores, deal, num_issues=5):
     return deal_sum 
 
 
-def extract_deal(answer, num_issues=5): 
+def extract_deal(answer, full_answer, num_issues=5, parse_deal_tag=False): 
     answer = answer.replace('\n','')
     issue_names = string.ascii_uppercase[:26] 
     deal = []
     issues_suggested=0
+    if parse_deal_tag:
+        if "DEAL" in full_answer and "/DEAL" in full_answer:
+            answer += full_answer.split('DEAL')[1]
     for i in range(0,num_issues):
         option = re.findall(f'{issue_names[i]}[1-9]', answer,re.DOTALL)
         deal.append(option[0]) if option else deal.append('')
-        if option: issues_suggested +=1 
+        if option: 
+            issues_suggested += 1
     return deal, issues_suggested
 
 

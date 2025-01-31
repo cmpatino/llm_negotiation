@@ -1,0 +1,6 @@
+Foreign aid agency,foreign_agency,p2,cooperative,hf_Qwen/Qwen2.5-32B-Instruct
+Project manager,project_manager,p1,cooperative,hf_Qwen/Qwen2.5-32B-Instruct
+Local government,government,player,cooperative,hf_Qwen/Qwen2.5-32B-Instruct
+Landowners,landowners,player,cooperative,hf_Qwen/Qwen2.5-32B-Instruct
+Local NGO,NGO,player,cooperative,hf_Qwen/Qwen2.5-32B-Instruct
+Local Activists,activists,player,cooperative,hf_Qwen/Qwen2.5-32B-Instruct
