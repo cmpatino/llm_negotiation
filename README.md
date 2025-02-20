@@ -1,8 +1,27 @@
-## [Cooperation, Competition, and Maliciousness: LLM-Stakeholders Interactive Negotiation](https://arxiv.org/abs/2309.17234)
-- **Authors: Sahar Abdelnabi, Amr Gomaa, Sarath Sivaprasad, Lea Schönherr, Mario Fritz**
+## Reproducibility Study of [Cooperation, Competition, and Maliciousness: LLM-Stakeholders Interactive Negotiation](https://arxiv.org/abs/2309.17234)
 
 ## Abstract 
-There is an growing interest in using Large Language Models (LLMs) in multi-agent systems to tackle interactive real-world tasks that require effective collaboration and assessing complex situations. Yet, we still have a limited understanding of LLMs' communication and decision-making abilities in multi-agent setups. The fundamental task of negotiation spans many key features of communication, such as cooperation, competition, and manipulation potentials. Thus, we propose using scorable negotiation to evaluate LLMs. We create a testbed of complex multi-agent, multi-issue, and semantically rich negotiation games. To reach an agreement, agents must have strong arithmetic, inference, exploration, and planning capabilities while integrating them in a dynamic and multi-turn setup. We propose multiple metrics to rigorously quantify agents' performance and alignment with the assigned role. We provide procedures to create new games and increase games' difficulty to have an evolving benchmark. Importantly, we evaluate critical safety aspects such as the interaction dynamics between agents influenced by greedy and adversarial players. Our benchmark is highly challenging; GPT-3.5 and small models mostly fail, and GPT-4 and SoTA large models (e.g., Llama-3 70b) still underperform in adversarial, noisy, and more competitive games. 
+This paper presents a reproducibility study and extension of ``Cooperation, Competition, and Maliciousness: LLM-Stakeholders Interactive Negotiation." We validate the original findings by using a range of open-weight models (1.5B-70B parameters) and GPT-4o Mini while introducing several novel contributions. We propose a communication-free baseline to test whether successful negotiations are possible without agent interaction, evaluate recent small language models' performance, implement an inequality metric to assess negotiation fairness, analyze the Pareto frontier of the games, and analyze structural information leakage in model responses. Our results demonstrate that smaller models (<10B parameters) struggle with format adherence and coherent responses, but larger open-weight models can approach proprietary model performance. Additionally, we find that in many scenarios, single-agent approaches can achieve comparable results to multi-agent negotiations, challenging assumptions about the necessity of agent communication to perform well on the benchmark. This work also provides insights into the accessibility, fairness, environmental impact, and privacy considerations of LLM-based negotiation systems.
+
+## Our Modifications and Contributions
+- Originally, the authors set the model temperature to 0 and a random order of the agents for each round. However, the authors did not add a fixed seed in the code, making their exact results not reproducible. To address this, we added fixed seeds to the code setup. We then ran all the experiments 10 times with seeds ranging from 1 to 10. We also corrected the `do_sample` parameter in the Hugging Face pipeline, changing it from `True` to `False` to set up the correct greedy decoding configuration.
+
+  Although the original paper performed 20 runs, we reduced the number of experiments due to computational constraints. This decision was also influenced by the fact that the exact reproduction of the results is not possible.
+
+- The authors' code uses fixed `float32` precision for models loaded from Hugging Face, which can be inefficient and affect the generalization for models like Phi-4. We resolved this issue by using `auto` precision, which allows the framework to automatically select the most appropriate precision for the available hardware and model requirements. Additionally, we manually adjusted the precision of Llama models to `float16` precision. This configuration was recommended for managing memory constraints while maintaining an acceptable performance. It is important to note that `float16` is not a form of quantization but a more efficient memory format.
+
+- In their prompts, authors ask models to format their answers using specific tags, such as `<DEAL>`, `<PLAN>`, `<SCRATCHPAD>`, and `<ANSWER>`. These tags are later used to break the model's answer into the Chain-of-Thought structure. Models generally comply with these requirements. However, during evaluation, the `<DEAL>` tags are not used for parsing; instead, the suggested deals are parsed directly from the models' public answers. This approach often leads to unparsable deals, negatively impacting the scores of certain models.
+
+  We consider this a bug because models sometimes respond in a more human-like manner, describing the deals' meanings (e.g., "a loan of 200 dollars" instead of "option A2"). Additionally, the prompts are misleading, implying that the placement of the `<DEAL>` tag within the answer does not matter. This inconsistency skews the evaluation scores. We have addressed this issue and now report the corrected scores.
+
+- We found a bug in the game evaluation: the number of acceptable deals was computed incorrectly, leading to incorrect levels of difficulty and game analysis in the 'Turning the game difficulty' section of the original paper.
+
+- We found a bug in the evaluation notebook: the code inconsistently evaluated if the deal was acceptable. In one part of the code, the score was required to be greater than the minimal threshold, but in the rest of the code, a score equal to the minimal threshold was considered acceptable. After fixing the bug, a few model evaluations changed.
+
+- We also fixed minor bugs, such as bracket mismatches, setting the value of the API key, faulty conditional parses, and the missing `matplotlib` dependency.
+
+
+**From here onwards, we preserve the README from the original paper because we believe it was well written and formatted.**
 
 ### Example 
 - You can find [here](https://amrgomaaelhady.github.io/LLM-Deliberation-Demo/) an example of one of our runs with GPT-4 
@@ -207,17 +226,4 @@ ISSUES_NUM = 5
 - Please note that some logs were generated with our previous code base and the logs were saved in a slightly different scheme. Please refer to `old_code` branch (we will add more details TBD).
 
 ---
-
-## Citation 
-If you find our paper, dataset, or this repo helpful, please cite our paper:
-
-``` 
-@inproceedings{
-abdelnabi2024negotiation,
-title={Cooperation, Competition, and Maliciousness: {LLM}-Stakeholders Interactive Negotiation},
-author={Sahar Abdelnabi and Amr Gomaa and Sarath Sivaprasad and Lea Schönherr and Mario Fritz},
-booktitle={The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
-year={2024},
-}
-```
 
