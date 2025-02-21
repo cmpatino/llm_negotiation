@@ -118,7 +118,7 @@ class StructualLeakageVerifier():
         for i, turn in enumerate(rounds):
             full_answer = turn.get('full_answer', '')
             public_answer = turn.get('public_answer', '')
-            if (full_answer == public_answer or any(tag in public_answer for tag in ["<PLAN>", "</PLAN>", "<SCRATCHPAD>", "</SCRATCHPAD>"])): # or any(tag not in public_answer for tag in ["<DEAL>", "</DEAL>"])
+            if (full_answer == public_answer or any(tag in public_answer for tag in ["<PLAN>", "</PLAN>", "<SCRATCHPAD>", "</SCRATCHPAD>"]) or any(tag not in public_answer for tag in ["<DEAL>", "</DEAL>"])): 
                 mismatches.append({
                     "round": i + 1,
                     "agent": turn.get('agent', 'unknown'),
