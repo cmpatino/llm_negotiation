@@ -149,7 +149,11 @@ class Agent():
             'gpt-4o-mini': {
                 'input_cost': 0.15 / 1000000,
                 'output_cost': 0.60 / 1000000
-            }
+            },
+            'gpt-4': {
+                'input_cost': 30 / 1000000,
+                'output_cost': 60 / 1000000
+            },
         }
         for key, value in self.messages_history.items():
             if key == 'inputs':
