@@ -145,7 +145,11 @@ class InitialPrompt:
         elif self.incentive_fn:
             incentive_rules = self.incentive_fn()
         
+        #original order
         final_initial_prompt = self.global_instructions + '\n' + self.individual_instructions +  scoring_rules + voting_rules + incentive_rules
+        #tempered with order for base_rewritten_perturbed
+        # final_initial_prompt = self.global_instructions + '\n' + incentive_rules + self.individual_instructions + scoring_rules + voting_rules
+
 
         # Additional bonus rule for p1
         if self.agent_game_name == self.p1:
